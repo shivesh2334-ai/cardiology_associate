@@ -73,7 +73,9 @@ async def create_patient(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
-    patient = Patient(**body.model_dump())
+    if not user.hospital_id:
+        raise HTTPException(status_code=400, detail="Your account is not assigned to a hospital")
+    patient = Patient(hospital_id=user.hospital_id, **body.model_dump())
     if body.ai_consent:
         patient.ai_consent_at = datetime.now(timezone.utc)
     db.add(patient)
@@ -150,6 +152,9 @@ async def upsert_icu_data(
     db: AsyncSession = Depends(get_db),
     user=Depends(get_current_user),
 ):
+    patient_result = await db.execute(select(Patient).where(Patient.id == patient_id))
+    if not patient_result.scalar_one_or_none():
+        raise HTTPException(status_code=404, detail="Patient not found")
     result = await db.execute(select(ICUData).where(ICUData.patient_id == patient_id))
     icu = result.scalar_one_or_none()
     if icu:

@@ -25,7 +25,7 @@ async def generate(
     user=Depends(get_current_user),
 ):
     """Generate AI family briefing document. Returns structured briefing for co-pilot screen."""
-    return await generate_briefing(payload, db)
+    return await generate_briefing(payload, user.id, db)
 
 
 @router.post("/complete", response_model=BriefingOut)

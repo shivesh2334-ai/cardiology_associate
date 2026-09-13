@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     ENVIRONMENT: str = "development"
 
+    # Comma-separated origins used outside development.
+    CORS_ORIGINS: str = "https://acagent.easymycare.com"
+
     # API Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "CHANGE_THIS_IN_PRODUCTION_USE_256BIT_RANDOM")
     ALGORITHM: str = "HS256"

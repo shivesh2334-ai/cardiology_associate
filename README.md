@@ -70,10 +70,15 @@ docker-compose up db -d
 ```bash
 cd backend
 pip install -r requirements.txt
+python seed.py
 uvicorn main:app --reload --port 8000
 ```
 
 API docs available at: http://localhost:8000/docs
+
+The local seed defaults to `doctor@example.com` / `ChangeMe123!`. Override these
+with `SEED_ADMIN_EMAIL` and `SEED_ADMIN_PASSWORD`, and never use the defaults in
+a shared environment.
 
 ### 4. Start frontend
 
@@ -84,6 +89,9 @@ npx expo start
 ```
 
 Scan QR code with Expo Go on your phone.
+
+For a physical phone, set `EXPO_PUBLIC_API_URL` to the backend's reachable LAN or
+HTTPS address; `localhost` points to the phone itself.
 
 ---
 
@@ -141,13 +149,33 @@ No AI content reaches the patient record without explicit Associate approval.
 
 ---
 
-## Compliance
+## Privacy and compliance readiness
 
-- **DPDPA 2023** — Consent recorded per patient before AI processing
-- **Data Residency** — AWS ap-south-1 (Mumbai) — data never leaves India
+- **DPDPA 2023 workflow** — Consent is recorded per patient before AI processing
+- **Data processing** — Clinical prompt content is sent to the configured AI provider; deployers must execute the appropriate data-processing agreements and verify residency requirements
+- **Infrastructure** — PostgreSQL and application hosting must be configured for the hospital's approved region and retention policy
 - **Medico-Legal** — All notes carry approving clinician name, designation, registration number, timestamp
 - **Audit Trail** — Every AI call, every edit, every approval logged
 - **AI Transparency** — All generated notes marked "Generated with AI assistance"
+
+These controls support compliance implementation but do not, by themselves,
+certify the deployment as DPDPA-, NMC-, or hospital-policy-compliant. Complete a
+privacy, security, clinical-safety, and medico-legal review before real patient use.
+
+---
+
+## Verification
+
+```bash
+cd frontend
+npm install
+npx tsc --noEmit
+npx expo export --platform web
+
+cd ../backend
+python -m compileall -q .
+python -c "import main; print(main.app.title)"
+```
 
 ---
 

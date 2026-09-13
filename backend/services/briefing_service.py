@@ -65,6 +65,7 @@ def _calculate_next_briefing(trajectory: ClinicalTrajectory) -> datetime:
 
 async def generate_briefing(
     payload: BriefingInputPayload,
+    conducted_by_id: uuid.UUID,
     db: AsyncSession,
 ) -> BriefingGenerateResponse:
     """
@@ -152,7 +153,7 @@ async def generate_briefing(
     # ── 6. Store briefing record ──────────────────────────────────────────────
     briefing = FamilyBriefing(
         patient_id=payload.patient_id,
-        conducted_by_id=None,   # Set by router from current_user
+        conducted_by_id=conducted_by_id,
         status=BriefingStatus.GENERATED,
         clinical_snapshot=payload.model_dump(),
         ai_briefing_doc=raw_doc,
