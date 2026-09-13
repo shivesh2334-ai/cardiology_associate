@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "AC Agent",
+    "slug": "ac-agent",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "web": { "bundler": "metro" },
+    "ios": { "supportsTablet": true },
+    "android": { "package": "com.emcdigitals.acagent" }
+  }
+}
