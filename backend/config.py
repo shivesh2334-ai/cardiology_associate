@@ -13,10 +13,10 @@ class Settings(BaseSettings):
     APP_NAME: str = "AC Agent — Associate Consultant AI"
     VERSION: str = "1.0.0"
     DEBUG: bool = False
-    ENVIRONMENT: str = "development"
+    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "production")
 
     # Comma-separated origins used outside development.
-    CORS_ORIGINS: str = "https://acagent.easymycare.com"
+    CORS_ORIGINS: str = "https://cardiology-associate.vercel.app,https://acagent.easymycare.com"
 
     # API Security
     SECRET_KEY: str = os.getenv("SECRET_KEY", "CHANGE_THIS_IN_PRODUCTION_USE_256BIT_RANDOM")
