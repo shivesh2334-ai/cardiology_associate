@@ -1,0 +1,11 @@
+import React from 'react';
+import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { useNavigation,useRoute,RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/RootNavigator';
+import { useBriefingStore } from '../hooks/useBriefingStore';
+import { Button, AlertBanner } from '../components/ui';
+import { Colors,Spacing,Radius,Typography } from '../utils/design';
+type Route=RouteProp<RootStackParamList,'BriefingPreview'>;type Nav=NativeStackNavigationProp<RootStackParamList,'BriefingPreview'>;
+export default function BriefingPreview(){const {briefingId,patientId}=useRoute<Route>().params;const nav=useNavigation<Nav>();const {document:d,patientName}=useBriefingStore(briefingId);if(!d)return <View style={s.center}><Text>Briefing draft unavailable. Please regenerate.</Text></View>;const section=(title:string,text:string)=><View style={s.card}><Text style={s.title}>{title}</Text><Text style={s.body}>{text}</Text></View>;return <ScrollView contentContainerStyle={s.content}><Text style={s.patient}>{patientName}</Text><Text style={s.trajectory}>{d.trajectory_indicator} {d.trajectory_label}</Text><AlertBanner type="warning" message="Review every statement before speaking with the family. Avoid unsupported certainty or timelines."/>{section('1. Current condition',d.q1_plain_language)}{section('2. Treatment',d.q2_plain_language)}{section('3. Breathing / ventilator',d.q3_plain_language)}{section('4. Recovery milestones',d.q4_plain_language)}{section('5. Cause',d.q5_cause_plain)}<Button label="Start live briefing" onPress={()=>nav.navigate('BriefingCopilot',{briefingId,patientId})}/></ScrollView>}
+const s=StyleSheet.create({content:{padding:Spacing.base,paddingBottom:48},center:{flex:1,alignItems:'center',justifyContent:'center'},patient:{fontSize:Typography.xl,fontWeight:'700',color:Colors.brandDark},trajectory:{fontSize:Typography.md,fontWeight:'600',marginVertical:Spacing.sm},card:{backgroundColor:Colors.white,padding:Spacing.base,borderRadius:Radius.md,marginBottom:Spacing.md},title:{fontWeight:'700',color:Colors.brandDark,marginBottom:6},body:{fontSize:Typography.base,lineHeight:22,color:Colors.textPrimary}});
