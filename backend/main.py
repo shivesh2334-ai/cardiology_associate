@@ -59,8 +59,8 @@ All endpoints require Bearer token. Obtain via `/auth/login`.
 # ── CORS ──────────────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if settings.DEBUG else ["https://acagent.easymycare.com"],
-    allow_credentials=True,
+    allow_origins=["*"] if settings.DEBUG else [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()],
+    allow_credentials=False if settings.DEBUG else True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
