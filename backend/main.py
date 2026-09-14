@@ -3,7 +3,6 @@ AC Agent — Main Application Entry Point
 """
 
 import logging
-import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -13,7 +12,6 @@ from fastapi.responses import JSONResponse
 from config import settings
 from database import init_db
 from routers import auth, patients, briefings, notes
-from seed import seed
 
 # Logging
 logging.basicConfig(
@@ -31,9 +29,6 @@ async def lifespan(app: FastAPI):
     try:
         await init_db()
         logger.info("Database tables verified / created")
-        if os.getenv("SEED_ADMIN_PASSWORD"):
-            await seed()
-            logger.info("Bootstrap administrator verified")
     except Exception:
         logger.exception("Database initialization failed; API started in degraded mode")
     yield
