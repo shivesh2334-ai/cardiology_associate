@@ -28,11 +28,14 @@ async def lifespan(app: FastAPI):
     """Startup and shutdown events."""
     logger.info(f"Starting {settings.APP_NAME} v{settings.VERSION}")
     logger.info(f"Environment: {settings.ENVIRONMENT}")
-    await init_db()
-    logger.info("Database tables verified / created")
-    if os.getenv("SEED_ADMIN_PASSWORD"):
-        await seed()
-        logger.info("Bootstrap administrator verified")
+    try:
+        await init_db()
+        logger.info("Database tables verified / created")
+        if os.getenv("SEED_ADMIN_PASSWORD"):
+            await seed()
+            logger.info("Bootstrap administrator verified")
+    except Exception:
+        logger.exception("Database initialization failed; API started in degraded mode")
     yield
     logger.info("Shutting down AC Agent API")
 
