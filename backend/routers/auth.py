@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from auth import create_access_token, verify_password, hash_password, get_current_user
+from auth import create_access_token, verify_password, hash_password, get_current_user, require_admin
 from database import get_db
 from models import User, UserRole
 from schemas import LoginRequest, TokenResponse, UserCreate, UserOut
@@ -35,7 +35,11 @@ async def login(form: OAuth2PasswordRequestForm = Depends(), db: AsyncSession = 
 
 
 @router.post("/register", response_model=UserOut, status_code=201)
-async def register(body: UserCreate, db: AsyncSession = Depends(get_db)):
+async def register(
+    body: UserCreate,
+    db: AsyncSession = Depends(get_db),
+    admin: User = Depends(require_admin),
+):
     result = await db.execute(select(User).where(User.email == body.email))
     if result.scalar_one_or_none():
         raise HTTPException(status_code=409, detail="Email already registered")
