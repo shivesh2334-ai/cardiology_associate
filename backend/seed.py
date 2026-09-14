@@ -10,8 +10,11 @@ from models import Hospital, User, UserRole
 
 
 async def seed() -> None:
-    email = os.getenv("SEED_ADMIN_EMAIL", "doctor@example.com").lower()
-    password = os.getenv("SEED_ADMIN_PASSWORD", "ChangeMe123!")
+    email = os.getenv("SEED_ADMIN_EMAIL", "drshivesh@gmail.com").lower()
+    password = os.getenv("SEED_ADMIN_PASSWORD")
+    if not password:
+        print("SEED_ADMIN_PASSWORD is not set; skipping administrator bootstrap.")
+        return
     await init_db()
     async with AsyncSessionLocal() as db:
         if (await db.execute(select(User).where(User.email == email))).scalar_one_or_none():
@@ -22,9 +25,9 @@ async def seed() -> None:
         await db.flush()
         db.add(User(
             email=email,
-            full_name="Demo Clinician",
-            designation="Associate Consultant",
-            registration_no="DEMO-001",
+            full_name="Dr. Shivesh Kumar",
+            designation="Administrator / Associate Consultant",
+            registration_no=None,
             role=UserRole.ADMIN,
             hospital_id=hospital.id,
             hashed_password=hash_password(password),
