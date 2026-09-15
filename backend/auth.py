@@ -15,9 +15,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import settings
 from database import get_db
-from models import User, UserRole
+from models import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login", auto_error=False)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 
 # ── Password ──────────────────────────────────────────────────────────────────
@@ -55,21 +55,9 @@ def decode_token(token: str) -> dict:
 # ── FastAPI Dependencies ──────────────────────────────────────────────────────
 
 async def get_current_user(
-    token: Optional[str] = Depends(oauth2_scheme),
+    token: str = Depends(oauth2_scheme),
     db: AsyncSession = Depends(get_db),
 ) -> User:
-    if not token:
-        result = await db.execute(
-            select(User).where(
-                User.email == "drshivesh@gmail.com",
-                User.role == UserRole.ADMIN,
-            )
-        )
-        user = result.scalar_one_or_none()
-        if not user or not user.is_active:
-            raise HTTPException(status_code=503, detail="Default administrator unavailable")
-        return user
-
     payload = decode_token(token)
     user_id: str = payload.get("sub")
     if not user_id:
