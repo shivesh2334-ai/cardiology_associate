@@ -6,14 +6,13 @@
 import React, { useEffect, useCallback } from 'react';
 import {
   View, Text, FlatList, TouchableOpacity, StyleSheet,
-  RefreshControl, Alert
+  RefreshControl
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors, Typography, Spacing, Radius, Shadow, trajectoryColor } from '../utils/design';
 import { TrajectoryBadge, EmptyState, LoadingScreen } from '../components/ui';
 import { usePatients } from '../context/PatientContext';
-import { useAuth } from '../context/AuthContext';
 import { PatientListItem } from '../services/api';
 import { RootStackParamList } from '../navigation/RootNavigator';
 
@@ -22,7 +21,6 @@ type Nav = NativeStackNavigationProp<RootStackParamList, 'PatientList'>;
 export default function PatientListScreen() {
   const navigation = useNavigation<Nav>();
   const { patients, isLoadingList, fetchPatients } = usePatients();
-  const { user, logout } = useAuth();
 
   useEffect(() => { fetchPatients(); }, []);
 
@@ -86,17 +84,12 @@ export default function PatientListScreen() {
       {/* Header bar */}
       <View style={styles.headerBar}>
         <View>
-          <Text style={styles.headerGreeting}>Dr. {user?.full_name?.split(' ')[0] ?? ''}</Text>
+          <Text style={styles.headerGreeting}>Dr. Shivesh</Text>
           <Text style={styles.headerSub}>{patients.length} active patients</Text>
         </View>
-        <TouchableOpacity onPress={() => Alert.alert('Logout', 'Sign out?', [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Sign Out', style: 'destructive', onPress: logout }
-        ])}>
-          <View style={styles.avatarCircle}>
-            <Text style={styles.avatarText}>{user?.full_name?.[0] ?? 'D'}</Text>
-          </View>
-        </TouchableOpacity>
+        <View style={styles.avatarCircle}>
+          <Text style={styles.avatarText}>S</Text>
+        </View>
       </View>
 
       <FlatList
